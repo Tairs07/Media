@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <ProjectTaskBook>
+      <ProjectInfo>
+          <ProjectName>图片视频分享网站</ProjectName>
+          <Description>一个支持用户上传、浏览图片和视频的社交分享平台</Description>
+          <TechStack>
+              <Frontend>Vue 3</Frontend>
+              <Backend>.NET 8</Backend>
+              <Database>使用 SQL Server</Database>
+              <Storage>建议使用云存储服务（阿里云OSS/腾讯云COS）或本地文件存储</Storage>
+          </TechStack>
+      </ProjectInfo>
+
+      <Phases>
+          <!-- 第一阶段：项目初始化与架构设计 -->
+          <Phase id="1" name="项目初始化与架构设计" priority="high">
+              <Tasks>
+                  <Task id="1.1">
+                      <Name>创建项目结构</Name>
+                      <Description>初始化前后端项目骨架</Description>
+                      <SubTasks>
+                          <SubTask>创建 Vue 3 前端项目（使用 Vite）</SubTask>
+                          <SubTask>创建 .NET 8 Web API 项目</SubTask>
+                          <SubTask>配置项目依赖和包管理</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>4小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="1.2">
+                      <Name>数据库设计</Name>
+                      <Description>设计数据库表结构</Description>
+                      <SubTasks>
+                          <SubTask>设计用户表（Users）：ID, 用户名, 密码哈希, 邮箱, 创建时间等</SubTask>
+                          <SubTask>设计媒体文件表（MediaFiles）：ID, 文件名, 文件类型, 文件路径, 上传时间, 用户ID等</SubTask>
+                          <SubTask>设计用户会话表（可选）</SubTask>
+                          <SubTask>创建数据库迁移脚本</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>6小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="1.3">
+                      <Name>技术架构设计</Name>
+                      <Description>确定项目技术架构和开发规范</Description>
+                      <SubTasks>
+                          <SubTask>定义API接口规范（RESTful）</SubTask>
+                          <SubTask>设计文件存储方案</SubTask>
+                          <SubTask>设计身份认证方案（JWT Token）</SubTask>
+                          <SubTask>前端路由规划</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>4小时</EstimatedTime>
+                  </Task>
+              </Tasks>
+          </Phase>
+
+          <!-- 第二阶段：后端开发 -->
+          <Phase id="2" name="后端开发 - .NET 8" priority="high">
+              <Tasks>
+                  <Task id="2.1">
+                      <Name>用户认证模块</Name>
+                      <Description>实现用户注册、登录、身份验证功能</Description>
+                      <SubTasks>
+                          <SubTask>实现用户注册API（密码加密存储）</SubTask>
+                          <SubTask>实现用户登录API（JWT Token生成）</SubTask>
+                          <SubTask>实现JWT中间件和身份验证</SubTask>
+                          <SubTask>实现Token刷新机制</SubTask>
+                          <SubTask>实现密码重置功能（可选）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>12小时</EstimatedTime>
+                      <Dependencies>1.2, 1.3</Dependencies>
+                  </Task>
+
+                  <Task id="2.2">
+                      <Name>文件上传模块</Name>
+                      <Description>实现图片和视频上传功能</Description>
+                      <SubTasks>
+                          <SubTask>实现文件上传API（支持多文件上传）</SubTask>
+                          <SubTask>实现文件类型验证（图片、视频格式）</SubTask>
+                          <SubTask>实现文件大小限制</SubTask>
+                          <SubTask>实现文件存储（本地/云存储）</SubTask>
+                          <SubTask>生成文件缩略图（图片）</SubTask>
+                          <SubTask>记录文件元数据到数据库</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>16小时</EstimatedTime>
+                      <Dependencies>1.2, 2.1</Dependencies>
+                  </Task>
+
+                  <Task id="2.3">
+                      <Name>内容浏览模块</Name>
+                      <Description>实现内容列表和详情查询功能</Description>
+                      <SubTasks>
+                          <SubTask>实现获取所有媒体文件列表API（分页）</SubTask>
+                          <SubTask>实现获取单个文件详情API</SubTask>
+                          <SubTask>实现按用户筛选文件列表API</SubTask>
+                          <SubTask>实现文件搜索功能（可选）</SubTask>
+                          <SubTask>实现文件排序（按时间、热度等）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>10小时</EstimatedTime>
+                      <Dependencies>1.2, 2.2</Dependencies>
+                  </Task>
+
+                  <Task id="2.4">
+                      <Name>用户个人资料模块</Name>
+                      <Description>实现用户信息管理功能</Description>
+                      <SubTasks>
+                          <SubTask>实现获取用户信息API</SubTask>
+                          <SubTask>实现更新用户信息API</SubTask>
+                          <SubTask>实现获取用户上传列表API</SubTask>
+                          <SubTask>实现删除用户上传文件API</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>8小时</EstimatedTime>
+                      <Dependencies>2.1, 2.2</Dependencies>
+                  </Task>
+
+                  <Task id="2.5">
+                      <Name>文件下载和访问</Name>
+                      <Description>实现文件访问和下载功能</Description>
+                      <SubTasks>
+                          <SubTask>实现静态文件服务</SubTask>
+                          <SubTask>实现文件流式传输（视频）</SubTask>
+                          <SubTask>实现访问权限控制</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>6小时</EstimatedTime>
+                      <Dependencies>2.2</Dependencies>
+                  </Task>
+              </Tasks>
+          </Phase>
+
+          <!-- 第三阶段：前端开发 -->
+          <Phase id="3" name="前端开发 - Vue 3" priority="high">
+              <Tasks>
+                  <Task id="3.1">
+                      <Name>项目基础配置</Name>
+                      <Description>配置前端开发环境和基础组件</Description>
+                      <SubTasks>
+                          <SubTask>安装和配置 Vue Router</SubTask>
+                          <SubTask>安装和配置状态管理（Pinia）</SubTask>
+                          <SubTask>安装和配置 Axios（HTTP客户端）</SubTask>
+                          <SubTask>安装UI组件库（Element Plus / Ant Design Vue）</SubTask>
+                          <SubTask>配置API请求拦截器（添加Token）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>6小时</EstimatedTime>
+                      <Dependencies>1.1</Dependencies>
+                  </Task>
+
+                  <Task id="3.2">
+                      <Name>用户认证页面</Name>
+                      <Description>开发登录注册页面</Description>
+                      <SubTasks>
+                          <SubTask>创建登录页面（Login.vue）</SubTask>
+                          <SubTask>创建注册页面（Register.vue）</SubTask>
+                          <SubTask>实现表单验证</SubTask>
+                          <SubTask>实现登录/注册逻辑</SubTask>
+                          <SubTask>实现Token存储（localStorage/sessionStorage）</SubTask>
+                          <SubTask>实现路由守卫（���登录跳转）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>12小时</EstimatedTime>
+                      <Dependencies>2.1, 3.1</Dependencies>
+                  </Task>
+
+                  <Task id="3.3">
+                      <Name>首页浏览页面</Name>
+                      <Description>开发首页内容展示</Description>
+                      <SubTasks>
+                          <SubTask>创建首页组件（Home.vue）</SubTask>
+                          <SubTask>实现瀑布流/网格布局展示媒体内容</SubTask>
+                          <SubTask>实现图片懒加载</SubTask>
+                          <SubTask>实现视频预览播放</SubTask>
+                          <SubTask>实现分页或无限滚动加载</SubTask>
+                          <SubTask>实现内容筛选和排序</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>16小时</EstimatedTime>
+                      <Dependencies>2.3, 3.1</Dependencies>
+                  </Task>
+
+                  <Task id="3.4">
+                      <Name>内容详情页面</Name>
+                      <Description>开发单个内容的详情展示</Description>
+                      <SubTasks>
+                          <SubTask>创建详情页组件（MediaDetail.vue）</SubTask>
+                          <SubTask>实现图片查看器（支持放大、缩小）</SubTask>
+                          <SubTask>实现视频播放器（使用Video.js）</SubTask>
+                          <SubTask>显示上传用户信息</SubTask>
+                          <SubTask>实现下载功能</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>10小时</EstimatedTime>
+                      <Dependencies>2.3, 2.5, 3.1</Dependencies>
+                  </Task>
+
+                  <Task id="3.5">
+                      <Name>用户上传页面</Name>
+                      <Description>开发文件上传界面</Description>
+                      <SubTasks>
+                          <SubTask>创建上传页面组件（Upload.vue）</SubTask>
+                          <SubTask>实现文件选择和预览</SubTask>
+                          <SubTask>实现拖拽上传</SubTask>
+                          <SubTask>实现上传进度显示</SubTask>
+                          <SubTask>实现多文件批量上传</SubTask>
+                          <SubTask>实现上传前文件验证（类型、大小）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>14小时</EstimatedTime>
+                      <Dependencies>2.2, 3.1, 3.2</Dependencies>
+                  </Task>
+
+                  <Task id="3.6">
+                      <Name>个人中心页面</Name>
+                      <Description>开发用户个人中心</Description>
+                      <SubTasks>
+                          <SubTask>创建个人中心组件（Profile.vue）</SubTask>
+                          <SubTask>显示用户基本信息</SubTask>
+                          <SubTask>实现用户信息编辑</SubTask>
+                          <SubTask>展示用户上传的所有内容</SubTask>
+                          <SubTask>实现内容管理（删除、编辑）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>12小时</EstimatedTime>
+                      <Dependencies>2.4, 3.1, 3.2</Dependencies>
+                  </Task>
+
+                  <Task id="3.7">
+                      <Name>导航和布局组件</Name>
+                      <Description>开发全局导航和布局</Description>
+                      <SubTasks>
+                          <SubTask>创建顶部导航栏组件</SubTask>
+                          <SubTask>实现用户菜单（登录状态显示）</SubTask>
+                          <SubTask>实现响应式布局</SubTask>
+                          <SubTask>创建侧边栏（可选）</SubTask>
+                          <SubTask>创建页脚组件</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>8小时</EstimatedTime>
+                      <Dependencies>3.1</Dependencies>
+                  </Task>
+              </Tasks>
+          </Phase>
+
+          <!-- 第四阶段：功能增强 -->
+          <Phase id="4" name="功能增强" priority="medium">
+              <Tasks>
+                  <Task id="4.1">
+                      <Name>评论功能</Name>
+                      <Description>为媒体内容添加评论系统</Description>
+                      <SubTasks>
+                          <SubTask>设计评论表</SubTask>
+                          <SubTask>实现评论API（增删查）</SubTask>
+                          <SubTask>开发评论组件</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>10小时</EstimatedTime>
+                      <Dependencies>2.3, 3.4</Dependencies>
+                  </Task>
+
+                  <Task id="4.2">
+                      <Name>点赞收藏功能</Name>
+                      <Description>添加内容互动功能</Description>
+                      <SubTasks>
+                          <SubTask>设计点赞/收藏表</SubTask>
+                          <SubTask>实现点赞/收藏API</SubTask>
+                          <SubTask>开发点赞/收藏UI</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>8小时</EstimatedTime>
+                      <Dependencies>2.3, 3.4</Dependencies>
+                  </Task>
+
+                  <Task id="4.3">
+                      <Name>搜索功能</Name>
+                      <Description>实现内容搜索</Description>
+                      <SubTasks>
+                          <SubTask>实现搜索API（关键词、标签）</SubTask>
+                          <SubTask>开发搜索界面</SubTask>
+                          <SubTask>实现搜索结果高亮</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>8小时</EstimatedTime>
+                      <Dependencies>2.3, 3.3</Dependencies>
+                  </Task>
+
+                  <Task id="4.4">
+                      <Name>标签分类功能</Name>
+                      <Description>为内容添加标签和分类</Description>
+                      <SubTasks>
+                          <SubTask>设计标签表</SubTask>
+                          <SubTask>实现标签管理API</SubTask>
+                          <SubTask>上传时添加标签</SubTask>
+                          <SubTask>按标签筛选内容</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>10小时</EstimatedTime>
+                      <Dependencies>2.2, 3.5</Dependencies>
+                  </Task>
+              </Tasks>
+          </Phase>
+
+          <!-- 第五阶段：测试与优化 -->
+          <Phase id="5" name="测试与优化" priority="high">
+              <Tasks>
+                  <Task id="5.1">
+                      <Name>单元测试</Name>
+                      <Description>编写后端和前端单元测试</Description>
+                      <SubTasks>
+                          <SubTask>编写后端API单元测试（xUnit）</SubTask>
+                          <SubTask>编写前端组件测试（Vitest）</SubTask>
+                          <SubTask>确保测试覆盖率 &gt; 70%</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>16小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="5.2">
+                      <Name>集成测试</Name>
+                      <Description>端到端功能测试</Description>
+                      <SubTasks>
+                          <SubTask>测试用户注册登录流程</SubTask>
+                          <SubTask>测试文件上传下载流程</SubTask>
+                          <SubTask>测试内容浏览和搜索</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>12小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="5.3">
+                      <Name>性能优化</Name>
+                      <Description>优化系统性能</Description>
+                      <SubTasks>
+                          <SubTask>前端代码分割和懒加载</SubTask>
+                          <SubTask>图片压缩和优化</SubTask>
+                          <SubTask>数据库查询优化和索引</SubTask>
+                          <SubTask>添加缓存机制（Redis可选）</SubTask>
+                          <SubTask>CDN配置（生产环境）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>12小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="5.4">
+                      <Name>安全加固</Name>
+                      <Description>提升系统安全性</Description>
+                      <SubTasks>
+                          <SubTask>实现CSRF防护</SubTask>
+                          <SubTask>实现XSS防护</SubTask>
+                          <SubTask>实现SQL注入防护</SubTask>
+                          <SubTask>实现请求频率限制</SubTask>
+                          <SubTask>HTTPS配置</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>10小时</EstimatedTime>
+                  </Task>
+              </Tasks>
+          </Phase>
+
+          <!-- 第六阶段：部署上线 -->
+          <Phase id="6" name="部署上线" priority="medium">
+              <Tasks>
+                  <Task id="6.1">
+                      <Name>Docker容器化</Name>
+                      <Description>创建Docker镜像</Description>
+                      <SubTasks>
+                          <SubTask>编写后端Dockerfile</SubTask>
+                          <SubTask>编写前端Dockerfile</SubTask>
+                          <SubTask>编写docker-compose.yml</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>6小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="6.2">
+                      <Name>服务器部署</Name>
+                      <Description>部署到生产环境</Description>
+                      <SubTasks>
+                          <SubTask>配置服务��环境</SubTask>
+                          <SubTask>配置Nginx反向代理</SubTask>
+                          <SubTask>配置SSL证书</SubTask>
+                          <SubTask>配置数据库</SubTask>
+                          <SubTask>部署应用</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>8小时</EstimatedTime>
+                  </Task>
+
+                  <Task id="6.3">
+                      <Name>监控和日志</Name>
+                      <Description>添加系统监控</Description>
+                      <SubTasks>
+                          <SubTask>配置应用日志（Serilog）</SubTask>
+                          <SubTask>配置错误监控</SubTask>
+                          <SubTask>配置性能监控（可选）</SubTask>
+                      </SubTasks>
+                      <EstimatedTime>6小时</EstimatedTime>
+                  </Task>
+              </Tasks>
+          </Phase>
+      </Phases>
+
+      <Summary>
+          <TotalEstimatedTime>230小时（约5-6周，1-2人团队）</TotalEstimatedTime>
+          <CoreFeatures>
+              <Feature>用户注册登录系统</Feature>
+              <Feature>图片视频上传功能</Feature>
+              <Feature>首页内容浏览</Feature>
+              <Feature>个人中心管理</Feature>
+              <Feature>响应式前端界面</Feature>
+          </CoreFeatures>
+          <TechnicalHighlights>
+              <Highlight>JWT身份认证</Highlight>
+              <Highlight>文件流式传输</Highlight>
+              <Highlight>瀑布流布局</Highlight>
+              <Highlight>RESTful API设计</Highlight>
+              <Highlight>前后端分离架构</Highlight>
+          </TechnicalHighlights>
+          <Risks>
+              <Risk>大文件上传可能需要分片上传机制</Risk>
+              <Risk>视频转码和压缩可能需要额外的媒体处理服务</Risk>
+              <Risk>存储成本需要考虑（云存储或本地存储容量）</Risk>
+              <Risk>并发上传和访问的性能瓶颈</Risk>
+          </Risks>
+      </Summary>
+
+      <Recommendations>
+          <Recommendation priority="high">
+              优先完成核心功能（阶段1-3），确保基本可用
+          </Recommendation>
+          <Recommendation priority="medium">
+              考虑使用云存储服务（OSS）而非本地存储，便于扩展
+          </Recommendation>
+          <Recommendation priority="medium">
+              为视频添加转码服务，生成多种清晰度版本
+          </Recommendation>
+          <Recommendation priority="low">
+              后期可考虑添加社交功能（关注、消息、动态等）
+          </Recommendation>
+      </Recommendations>
+  </ProjectTaskBook>
