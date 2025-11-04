@@ -76,9 +76,10 @@ const setupAnimation = () => {
   };
 
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load(props.imageSrc, texture => {
+  textureLoader.load(props.imageSrc, (texture: THREE.Texture) => {
     texture.minFilter = THREE.LinearFilter;
-    imageAspectRef.value = texture.image.width / texture.image.height;
+    const img = texture.image as HTMLImageElement;
+    imageAspectRef.value = img.width / img.height;
     uniforms.uTexture.value = texture;
     handleResize();
   });

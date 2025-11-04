@@ -115,3 +115,6 @@ using (var scope = app.Services.CreateScope())
 - 绝对路径：`Data Source=C:/Data/MediaShareDB.db`
 - 内存数据库（仅测试）：`Data Source=:memory:`
 
+
+
+

@@ -35,7 +35,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
+            ?? new[] { "http://localhost:5173", "http://localhost" };
+        
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -86,6 +89,22 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// 自动运行数据库迁移
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+        Console.WriteLine("数据库迁移成功");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"数据库迁移失败: {ex.Message}");
+    }
+}
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -93,7 +112,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// 仅在开发环境或非容器环境启用 HTTPS 重定向
+var isContainer = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
+if (app.Environment.IsDevelopment() || !isContainer)
+{
+    app.UseHttpsRedirection();
+}
 
 // 启用静态文件服务
 app.UseStaticFiles();

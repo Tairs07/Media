@@ -20,18 +20,18 @@
             <template #header>
               <div class="card-title">个人信息</div>
             </template>
-            <Magnet>
-              <div class="user-info">
+            <div class="user-info">
+              <Magnet wrapper-class-name="avatar-magnet-wrapper" :magnet-strength="3">
                 <div class="avatar-placeholder">
                   <el-icon :size="64"><UserFilled /></el-icon>
                 </div>
-                <div class="info-details">
-                  <p><strong>用户名：</strong>{{ userInfo.username || '加载中...' }}</p>
-                  <p><strong>邮箱：</strong>{{ userInfo.email || '加载中...' }}</p>
-                  <p><strong>注册时间：</strong>{{ formatDate(userInfo.createdAt) || '未知' }}</p>
-                </div>
+              </Magnet>
+              <div class="info-details">
+                <p><strong>用户名：</strong>{{ userInfo.username || '加载中...' }}</p>
+                <p><strong>邮箱：</strong>{{ userInfo.email || '加载中...' }}</p>
+                <p><strong>注册时间：</strong>{{ formatDate(userInfo.createdAt) || '未知' }}</p>
               </div>
-            </Magnet>
+            </div>
             <div class="edit-section">
               <el-button type="primary" @click="showEditDialog = true">
                 编辑资料
@@ -434,5 +434,10 @@ onMounted(() => {
   background: var(--bg-secondary);
   border-color: var(--border-color);
   color: var(--text-primary);
+}
+
+.avatar-magnet-wrapper {
+  display: inline-block !important;
+  flex-shrink: 0;
 }
 </style>

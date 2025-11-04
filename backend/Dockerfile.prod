@@ -1,0 +1,33 @@
+# 运行时镜像（用于已构建的发布文件）
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+
+# 使用阿里云镜像源加速（适用于中国大陆）
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources && \
+    sed -i 's|security.debian.org/debian-security|mirrors.aliyun.com/debian-security|g' /etc/apt/sources.list.d/debian.sources
+
+# 安装必要的系统依赖（用于图片处理和健康检查）
+RUN apt-get update && apt-get install -y \
+    libgdiplus \
+    libc6-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制已发布的文件（从本地构建）
+COPY publish/ .
+
+# 创建上传目录
+RUN mkdir -p wwwroot/uploads/images wwwroot/uploads/videos wwwroot/uploads/thumbnails && \
+    chmod -R 755 wwwroot/uploads
+
+# 暴露端口
+EXPOSE 5000
+
+# 设置环境变量
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+# 启动应用
+ENTRYPOINT ["dotnet", "backend.dll"]
+
+

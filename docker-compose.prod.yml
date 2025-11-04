@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # 后端服务（使用预构建的发布文件）
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: mediashare-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      # 持久化数据库文件
+      - ./data/MediaShareDB.db:/app/MediaShareDB.db
+      # 持久化上传文件
+      - ./data/uploads:/app/wwwroot/uploads
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Data Source=MediaShareDB.db
+    networks:
+      - mediashare-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 前端服务（使用预构建的dist文件）
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: mediashare-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - mediashare-network
+
+networks:
+  mediashare-network:
+    driver: bridge
