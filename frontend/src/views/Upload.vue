@@ -1,8 +1,15 @@
 <template>
   <div class="upload-container">
-    <!-- 背景 -->
+    <!-- 背景 - Squares网格 -->
     <div class="background-layer">
-      <GridMotion class="absolute inset-0" />
+      <Squares
+        direction="diagonal"
+        :speed="0.5"
+        borderColor="rgba(0, 255, 136, 0.25)"
+        :squareSize="50"
+        hoverFillColor="rgba(0, 255, 136, 0.15)"
+        style="width: 100%; height: 100%;"
+      />
     </div>
 
     <!-- 内容 -->
@@ -15,13 +22,12 @@
 
       <FadeContent :duration="1000" :delay="200">
         <el-card class="upload-card">
-          <Magnet :magnetStrength="3" :padding="50">
-            <div 
-              class="upload-area" 
-              @click="triggerFileInput"
-              @dragover.prevent
-              @drop.prevent="handleDrop"
-            >
+          <div
+            class="upload-area"
+            @click="triggerFileInput"
+            @dragover.prevent
+            @drop.prevent="handleDrop"
+          >
               <input
                 ref="fileInputRef"
                 type="file"
@@ -39,29 +45,56 @@
                 <p class="upload-hint">支持图片和视频格式</p>
               </div>
 
-              <div v-else class="file-list">
-                <div
-                  v-for="(file, index) in selectedFiles"
-                  :key="index"
-                  class="file-item"
-                >
-                  <el-icon><Document /></el-icon>
-                  <span class="file-name">{{ file.name }}</span>
-                  <span class="file-size">{{ formatFileSize(file.size) }}</span>
-                  <el-button
-                    type="danger"
-                    :icon="Delete"
-                    circle
-                    size="small"
-                    @click="removeFile(index)"
-                  />
+              <div v-else class="preview-container">
+                <!-- 文件预览 -->
+                <div class="preview-area">
+                  <div
+                    v-for="(file, index) in selectedFiles"
+                    :key="index"
+                    class="preview-item"
+                  >
+                    <!-- 图片预览 -->
+                    <img
+                      v-if="file.type.startsWith('image/')"
+                      :src="previewUrls[index]"
+                      :alt="file.name"
+                      class="preview-media"
+                    />
+                    <!-- 视频预览 -->
+                    <video
+                      v-else-if="file.type.startsWith('video/')"
+                      :src="previewUrls[index]"
+                      class="preview-media"
+                      controls
+                    />
+                    <!-- 删除按钮 -->
+                    <el-button
+                      class="remove-btn"
+                      type="danger"
+                      :icon="Delete"
+                      circle
+                      size="small"
+                      @click.stop="removeFile(index)"
+                    />
+                    <div class="file-info-overlay">
+                      <p class="file-name-overlay">{{ file.name }}</p>
+                      <p class="file-size-overlay">{{ formatFileSize(file.size) }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </Magnet>
 
           <div v-if="selectedFiles.length" class="upload-options">
             <el-form :model="uploadForm" label-width="100px">
+              <el-form-item label="标题" required>
+                <el-input
+                  v-model="uploadForm.title"
+                  placeholder="请输入标题（必填）"
+                  maxlength="200"
+                  show-word-limit
+                />
+              </el-form-item>
               <el-form-item label="描述">
                 <el-input
                   v-model="uploadForm.description"
@@ -120,8 +153,7 @@ import { ElMessage } from 'element-plus'
 import { UploadFilled, Delete, Document } from '@element-plus/icons-vue'
 import FadeContent from '../bits-content/Animations/FadeContent/FadeContent.vue'
 import GradientText from '../bits-content/TextAnimations/GradientText/GradientText.vue'
-import GridMotion from '../bits-content/Backgrounds/GridMotion/GridMotion.vue'
-import Magnet from '../bits-content/Animations/Magnet/Magnet.vue'
+import Squares from '../bits-content/Backgrounds/Squares/Squares.vue'
 import api from '../utils/api'
 
 const router = useRouter()
@@ -130,10 +162,14 @@ const selectedFiles = ref<File[]>([])
 const uploading = ref(false)
 
 const uploadForm = ref({
+  title: '',
   description: '',
   tags: '',
   isPublic: true
 })
+
+// 文件预览URL
+const previewUrls = ref<string[]>([])
 
 const triggerFileInput = () => {
   fileInputRef.value?.click()
@@ -144,6 +180,11 @@ const handleFileSelect = (event: Event) => {
   if (target.files) {
     const newFiles = Array.from(target.files)
     selectedFiles.value.push(...newFiles)
+    // 生成预览URL
+    newFiles.forEach(file => {
+      const url = URL.createObjectURL(file)
+      previewUrls.value.push(url)
+    })
   }
 }
 
@@ -151,16 +192,31 @@ const handleDrop = (event: DragEvent) => {
   if (event.dataTransfer?.files) {
     const newFiles = Array.from(event.dataTransfer.files)
     selectedFiles.value.push(...newFiles)
+    // 生成预览URL
+    newFiles.forEach(file => {
+      const url = URL.createObjectURL(file)
+      previewUrls.value.push(url)
+    })
   }
 }
 
 const removeFile = (index: number) => {
+  // 清理预览URL
+  if (previewUrls.value[index]) {
+    URL.revokeObjectURL(previewUrls.value[index])
+  }
   selectedFiles.value.splice(index, 1)
+  previewUrls.value.splice(index, 1)
 }
 
 const clearFiles = () => {
+  // 清理所有预览URL
+  previewUrls.value.forEach(url => URL.revokeObjectURL(url))
+
   selectedFiles.value = []
+  previewUrls.value = []
   uploadForm.value = {
+    title: '',
     description: '',
     tags: '',
     isPublic: true
@@ -184,15 +240,23 @@ const handleUpload = async () => {
     return
   }
 
+  if (!uploadForm.value.title.trim()) {
+    ElMessage.warning('请输入标题')
+    return
+  }
+
   uploading.value = true
 
   try {
     const formData = new FormData()
-    
+
     // 添加文件
     selectedFiles.value.forEach(file => {
       formData.append('files', file)
     })
+
+    // 添加标题（必填）
+    formData.append('title', uploadForm.value.title.trim())
 
     // 添加其他字段
     if (uploadForm.value.description) {
@@ -228,21 +292,32 @@ const handleUpload = async () => {
 <style scoped>
 .upload-container {
   position: relative;
-  min-height: calc(100vh - 80px);
-  padding: 60px 4rem;
+  min-height: 100vh;
+  padding: 2rem 4rem 4rem;
   width: 100%;
 }
 
 .background-layer {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
+}
+
+.background-layer :deep(canvas) {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 .content-wrapper {
   position: relative;
   z-index: 1;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
@@ -250,31 +325,66 @@ const handleUpload = async () => {
 .page-title {
   text-align: center;
   margin-bottom: 3rem;
-  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -1px;
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.1),
+    0 0 4px rgba(255, 255, 255, 0.3),
+    0 0 80px rgba(58, 237, 112, 0.3);
+  animation: fadeInUp 1s ease-out;
 }
 
 .upload-card {
-  backdrop-filter: blur(20px);
-  background: rgba(26, 26, 26, 0.9);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
-  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
+  border-radius: 24px;
+  box-shadow: var(--shadow-md);
   margin-bottom: 2rem;
+  overflow: hidden;
+  animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+:deep(.el-card__body) {
+  padding: 2.5rem;
 }
 
 .upload-area {
-  min-height: 400px;
-  border: 3px dashed var(--accent-green);
-  border-radius: 12px;
-  padding: 60px;
+  min-height: 420px;
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
+  padding: 3rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: rgba(0, 255, 136, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(30, 160, 63, 0.03);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(30, 160, 63, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .upload-area:hover {
-  border-color: var(--accent-yellow);
-  background: rgba(0, 255, 136, 0.1);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.08);
+  box-shadow:
+    0 0 40px rgba(58, 237, 112, 0.15),
+    var(--shadow-md);
+  transform: scale(1.01);
+}
+
+.upload-area:hover::before {
+  opacity: 1;
 }
 
 .upload-placeholder {
@@ -284,112 +394,290 @@ const handleUpload = async () => {
   justify-content: center;
   height: 100%;
   gap: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .upload-text {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--accent-green);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
 }
 
 .upload-hint {
   color: var(--text-secondary);
   font-size: 1rem;
+  opacity: 0.8;
 }
 
 .upload-options {
-  margin-top: 2rem;
-  padding-top: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
   border-top: 1px solid var(--border-color);
 }
 
 :deep(.el-form-item__label) {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 :deep(.el-input__wrapper) {
-  background: var(--bg-secondary);
+  background: rgba(21, 21, 21, 0.6);
   border-color: var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+:deep(.el-input__wrapper:hover),
+:deep(.el-input__wrapper.is-focus) {
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.05);
+  box-shadow: 0 0 0 1px var(--border-hover);
 }
 
 :deep(.el-textarea__inner) {
-  background: var(--bg-secondary);
+  background: rgba(21, 21, 21, 0.6);
   border-color: var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+:deep(.el-textarea__inner:hover),
+:deep(.el-textarea__inner:focus) {
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.05);
+  box-shadow: 0 0 0 1px var(--border-hover);
+}
+
+:deep(.el-switch.is-checked .el-switch__core) {
+  background-color: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+:deep(.el-input__inner) {
   color: var(--text-primary);
 }
 
-.file-list {
+.preview-container {
+  width: 100%;
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
-.file-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 16px;
+.preview-area {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  align-content: start;
+}
+
+/* 单个文件时填满整个区域 */
+.preview-area:has(.preview-item:only-child) {
+  grid-template-columns: 1fr;
+  height: 100%;
+}
+
+.preview-area:has(.preview-item:only-child) .preview-item {
+  height: 100%;
+  min-height: 400px;
+  aspect-ratio: unset;
+}
+
+.preview-item {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-height: 250px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
-.file-item:hover {
-  border-color: var(--accent-green);
-  background: rgba(0, 255, 136, 0.05);
+.preview-item:hover {
+  border-color: var(--border-hover);
+  box-shadow:
+    0 0 30px rgba(58, 237, 112, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px) scale(1.02);
 }
 
-.file-name {
-  flex: 1;
+.preview-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.preview-item:hover .remove-btn {
+  opacity: 1;
+}
+
+.file-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.preview-item:hover .file-info-overlay {
+  opacity: 1;
+}
+
+.file-name-overlay {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-primary);
 }
 
-.file-size {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+.file-size-overlay {
+  color: var(--accent-green);
+  font-size: 0.8rem;
 }
 
 .action-buttons {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   justify-content: center;
+  position: relative;
+  z-index: 10;
+  margin-top: 2rem;
+  animation: fadeInUp 1s ease-out 0.4s both;
 }
 
 .tech-button {
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border: 2px solid;
-  transition: all 0.3s ease;
+  padding: 0 2.5rem;
+  height: 55px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .tech-button.primary {
-  background: var(--accent-green);
-  border-color: var(--accent-green);
-  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+  background-size: 200% 200%;
+  color: #ffffff;
+  box-shadow: var(--shadow-glow), var(--shadow-lg);
+  animation: glow-pulse 3s ease-in-out infinite alternate;
+}
+
+.tech-button.primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
 }
 
 .tech-button.primary:hover {
-  background: var(--accent-green-dark);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-  transform: translateY(-2px);
+  box-shadow:
+    0 0 60px rgba(58, 237, 109, 0.3),
+    0 0 120px rgba(92, 246, 138, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.tech-button.primary:hover::before {
+  left: 100%;
 }
 
 .tech-button.secondary {
   background: transparent;
-  border-color: var(--accent-yellow);
-  color: var(--accent-yellow);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .tech-button.secondary:hover {
-  background: rgba(255, 215, 0, 0.1);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.1);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+}
+
+.tech-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+@media (max-width: 768px) {
+  .upload-container {
+    padding: 2rem 2rem 3rem;
+  }
+
+  .upload-area {
+    padding: 2rem;
+    min-height: 350px;
+  }
+
+  .preview-area {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tech-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-container {
+    padding: 1.5rem 1.5rem 2rem;
+  }
+
+  :deep(.el-card__body) {
+    padding: 1.5rem;
+  }
+
+  .upload-area {
+    padding: 1.5rem;
+    min-height: 300px;
+  }
+
+  .tech-button {
+    height: 48px;
+    font-size: 0.9rem;
+  }
 }
 </style>

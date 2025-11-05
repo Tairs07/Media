@@ -9,6 +9,10 @@ namespace backend.Models
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty; // 媒体标题，必填
+
+        [Required]
         [MaxLength(255)]
         public string FileName { get; set; } = string.Empty;
 

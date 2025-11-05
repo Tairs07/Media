@@ -1,22 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Figtree', 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* 科技感配色 - 黑色、绿色、黄色 */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #121212;
-  --bg-card: #1a1a1a;
-  --border-color: #2a2a2a;
-  
-  --accent-green: #00ff88;
-  --accent-green-dark: #00cc6a;
+  /* 深黑背景 - 参考demo设计 */
+  --bg-primary: #0b0b0b;
+  --bg-secondary: #151515;
+  --bg-card: rgba(26, 26, 26, 0.8);
+  --border-color: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.15);
+
+  /* 绿蓝渐变色 - 主色调 */
+  --accent-green: rgb(30, 160, 63);
+  --accent-blue: rgba(24, 47, 255, 1);
+  --accent-green-light: #00ff88;
   --accent-yellow: #ffd700;
-  --accent-yellow-dark: #ffb700;
-  
+
+  /* 文字颜色 */
   --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-muted: #666666;
+  --text-secondary: #cccccc;
+  --text-muted: #888888;
+
+  /* 毛玻璃效果 */
+  --glass-bg: rgba(255, 255, 255, 0.01);
+  --glass-border: rgba(255, 255, 255, 0.07);
+
+  /* 发光效果 */
+  --glow-green: rgba(58, 237, 112, 0.2);
+  --glow-green-strong: rgba(58, 237, 112, 0.4);
+
+  /* 阴影 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 8px 32px rgba(31, 135, 62, 0.15);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 40px rgba(58, 237, 112, 0.1),
+                  0 0 80px rgba(92, 246, 138, 0.1);
 
   color-scheme: dark;
   color: var(--text-primary);
@@ -43,29 +63,51 @@ body {
 
 a {
   font-weight: 500;
-  color: var(--accent-green);
+  color: var(--accent-green-light);
   text-decoration: inherit;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 a:hover {
   color: var(--accent-yellow);
+  transform: translateY(-1px);
 }
 
 button {
-  border-radius: 6px;
+  border-radius: 50px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  padding: 0.6em 1.5em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 通用动画 */
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.1) saturate(1.2);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 科技感滚动条 */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -73,10 +115,11 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-green);
-  border-radius: 5px;
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+  border-radius: 50px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-yellow);
+  background: linear-gradient(135deg, var(--accent-green-light), var(--accent-yellow));
+  box-shadow: 0 0 10px var(--glow-green);
 }

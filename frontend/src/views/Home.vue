@@ -1,8 +1,15 @@
 <template>
   <div class="home-container">
-    <!-- 背景动画层 -->
+    <!-- 背景动画层 - Squares网格 -->
     <div class="background-layer">
-      <GridMotion class="absolute inset-0" />
+      <Squares
+        direction="diagonal"
+        :speed="0.5"
+        borderColor="rgba(0, 255, 136, 0.75)"
+        :squareSize="50"
+        hoverFillColor="rgba(0, 255, 136, 0.75)"
+        style="width: 100%; height: 100%;"
+      />
     </div>
 
     <!-- 内容层 -->
@@ -63,12 +70,31 @@
               @click="$router.push(`/media/${file.id}`)"
             >
               <div class="media-thumbnail">
+                <!-- 有缩略图：显示缩略图 -->
                 <img
                   v-if="file.thumbnailPath"
                   :src="getFileUrl(file.thumbnailPath)"
                   :alt="file.fileName"
                   class="thumbnail-image"
+                  @error="handleImageError"
                 />
+                <!-- 图片类型但无缩略图：显示原图 -->
+                <img
+                  v-else-if="file.fileType === 'image' && file.filePath"
+                  :src="getFileUrl(file.filePath)"
+                  :alt="file.fileName"
+                  class="thumbnail-image"
+                  @error="handleImageError"
+                />
+                <!-- 视频类型：显示视频元素的第一帧 -->
+                <video
+                  v-else-if="file.fileType === 'video' && file.filePath"
+                  :src="getFileUrl(file.filePath)"
+                  class="thumbnail-image"
+                  preload="metadata"
+                  @error="handleVideoError"
+                />
+                <!-- 默认占位符 -->
                 <div v-else class="thumbnail-placeholder">
                   <el-icon :size="48"><Picture /></el-icon>
                 </div>
@@ -77,7 +103,7 @@
                 </div>
               </div>
               <div class="media-info">
-                <p class="media-name">{{ file.fileName }}</p>
+                <p class="media-title">{{ file.title }}</p>
                 <div class="media-stats">
                   <span><el-icon><View /></el-icon> {{ file.viewCount }}</span>
                   <span><el-icon><Star /></el-icon> {{ file.likeCount }}</span>
@@ -104,7 +130,7 @@ import { useAuthStore } from '../stores/auth'
 import { Loading, Picture, View, Star } from '@element-plus/icons-vue'
 import FadeContent from '../bits-content/Animations/FadeContent/FadeContent.vue'
 import GradientText from '../bits-content/TextAnimations/GradientText/GradientText.vue'
-import GridMotion from '../bits-content/Backgrounds/GridMotion/GridMotion.vue'
+import Squares from '../bits-content/Backgrounds/Squares/Squares.vue'
 import api from '../utils/api'
 
 const router = useRouter()
@@ -118,8 +144,10 @@ const hasMore = ref(false)
 
 interface MediaFile {
   id: number
+  title: string
   fileName: string
   fileType: string
+  filePath: string
   thumbnailPath?: string
   viewCount: number
   likeCount: number
@@ -176,6 +204,23 @@ const getFileUrl = (filePath: string): string => {
   return baseURL.replace('/api', '') + `/api/files/${encodeURIComponent(filePath)}`
 }
 
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement
+  console.error('图片加载失败:', target.src)
+  // 可以设置一个默认占位图
+  target.style.display = 'none'
+  const placeholder = target.nextElementSibling
+  if (placeholder) {
+    placeholder.classList.remove('hidden')
+  }
+}
+
+const handleVideoError = (event: Event) => {
+  const target = event.target as HTMLVideoElement
+  console.error('视频加载失败:', target.src)
+  target.style.display = 'none'
+}
+
 onMounted(() => {
   fetchMediaFiles()
 })
@@ -184,7 +229,7 @@ onMounted(() => {
 <style scoped>
 .home-container {
   position: relative;
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,19 +238,31 @@ onMounted(() => {
 }
 
 .background-layer {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   background: var(--bg-primary);
+}
+
+.background-layer :deep(canvas) {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 .content-wrapper {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1600px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 80px 4rem;
+  padding: 2rem 4rem 4rem;
+  text-align: center;
 }
 
 .content-layer {
@@ -214,64 +271,100 @@ onMounted(() => {
 }
 
 .main-title {
-  font-size: clamp(3rem, 5vw, 5rem);
-  font-weight: 900;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
   margin-bottom: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.1),
+    0 0 4px rgba(255, 255, 255, 0.3),
+    0 0 8px rgba(255, 255, 255, 0.2),
+    0 0 100px rgba(58, 237, 112, 0.3);
+  animation: fadeInUp 1s ease-out;
 }
 
 .subtitle {
-  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-size: clamp(1rem, 2vw, 1.4rem);
   color: var(--text-secondary);
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   font-weight: 300;
-  letter-spacing: 0.05em;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 .action-buttons {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 4rem;
+  animation: fadeInUp 1s ease-out 0.4s both;
 }
 
 .tech-button {
   position: relative;
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border: 2px solid;
-  transition: all 0.3s ease;
+  padding: 0 2rem;
+  height: 55px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tech-button.primary {
-  background: transparent;
-  border-color: var(--accent-green);
-  color: var(--accent-green);
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+  background-size: 200% 200%;
+  color: #ffffff;
+  box-shadow: var(--shadow-glow), var(--shadow-lg);
+  animation: glow-pulse 3s ease-in-out infinite alternate;
+}
+
+.tech-button.primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
 }
 
 .tech-button.primary:hover {
-  background: var(--accent-green);
-  color: var(--bg-primary);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-  transform: translateY(-2px);
+  box-shadow:
+    0 0 60px rgba(58, 237, 109, 0.3),
+    0 0 120px rgba(92, 246, 138, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.tech-button.primary:hover::before {
+  left: 100%;
 }
 
 .tech-button.secondary {
   background: transparent;
-  border-color: var(--accent-yellow);
-  color: var(--accent-yellow);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .tech-button.secondary:hover {
-  background: var(--accent-yellow);
-  color: var(--bg-primary);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.1);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -281,8 +374,9 @@ onMounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
+  z-index: 1;
 }
 
 .tech-button:hover .button-glow {
@@ -290,17 +384,31 @@ onMounted(() => {
 }
 
 .media-section {
-  margin-top: 4rem;
+  margin-top: 5rem;
   text-align: left;
+  animation: fadeInUp 1s ease-out 0.6s both;
 }
 
 .section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--accent-green);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 2rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: -0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--glow-green);
 }
 
 .loading-container {
@@ -308,36 +416,41 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   padding: 4rem 0;
-  color: var(--accent-green);
+  color: var(--accent-green-light);
 }
 
 .empty-state {
   text-align: center;
   padding: 4rem 0;
   color: var(--text-secondary);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  opacity: 0.7;
 }
 
 .media-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
 .media-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .media-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
-  border-color: var(--accent-green);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 0 40px rgba(58, 237, 112, 0.2),
+    0 10px 40px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-hover);
 }
 
 .media-thumbnail {
@@ -352,6 +465,12 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  background: var(--bg-secondary);
+}
+
+.thumbnail-image:is(video) {
+  /* 视频元素特定样式 */
+  pointer-events: none;
 }
 
 .thumbnail-placeholder {
@@ -369,13 +488,18 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   padding: 1rem;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 
 .media-card:hover .media-overlay {
@@ -383,23 +507,27 @@ onMounted(() => {
 }
 
 .file-type-badge {
-  background: var(--accent-green);
-  color: var(--bg-primary);
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+  color: #ffffff;
+  padding: 0.3rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .media-info {
-  padding: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(to bottom, transparent, rgba(11, 11, 11, 0.3));
 }
 
-.media-name {
+.media-title {
   color: var(--text-primary);
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -407,19 +535,75 @@ onMounted(() => {
 
 .media-stats {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .media-stats span {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  transition: color 0.2s ease;
+}
+
+.media-stats span:hover {
+  color: var(--accent-green-light);
 }
 
 .load-more {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 3rem;
+}
+
+.load-more .el-button {
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.load-more .el-button:hover {
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 2rem 2rem 3rem;
+  }
+
+  .media-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: 1.5rem 1.5rem 2rem;
+  }
+
+  .action-buttons {
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .tech-button {
+    height: 48px;
+    padding: 0 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

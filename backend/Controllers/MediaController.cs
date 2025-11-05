@@ -44,6 +44,7 @@ namespace backend.Controllers
         [HttpPost("upload")]
         public async Task<ActionResult<ApiResponse<UploadResponse>>> UploadFiles(
             [FromForm] List<IFormFile> files,
+            [FromForm] string title,
             [FromForm] string? description = null,
             [FromForm] string? tags = null,
             [FromForm] bool isPublic = true)
@@ -55,6 +56,14 @@ namespace backend.Controllers
                     return BadRequest(ApiResponse<UploadResponse>.ErrorResponse(
                         "NO_FILES",
                         "请选择要上传的文件"
+                    ));
+                }
+
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    return BadRequest(ApiResponse<UploadResponse>.ErrorResponse(
+                        "TITLE_REQUIRED",
+                        "请输入标题"
                     ));
                 }
 
@@ -115,6 +124,7 @@ namespace backend.Controllers
                     // 保存到数据库
                     var mediaFile = new MediaFile
                     {
+                        Title = title,
                         FileName = file.FileName,
                         FileType = fileType,
                         MimeType = file.ContentType,
@@ -139,6 +149,7 @@ namespace backend.Controllers
                     var fileDto = new MediaFileDto
                     {
                         Id = mediaFile.Id,
+                        Title = mediaFile.Title,
                         FileName = mediaFile.FileName,
                         FileType = mediaFile.FileType,
                         MimeType = mediaFile.MimeType,
@@ -249,6 +260,7 @@ namespace backend.Controllers
                     .Select(m => new MediaFileDto
                     {
                         Id = m.Id,
+                        Title = m.Title,
                         FileName = m.FileName,
                         FileType = m.FileType,
                         MimeType = m.MimeType,
@@ -329,6 +341,7 @@ namespace backend.Controllers
                 var fileDto = new MediaFileDto
                 {
                     Id = mediaFile.Id,
+                    Title = mediaFile.Title,
                     FileName = mediaFile.FileName,
                     FileType = mediaFile.FileType,
                     MimeType = mediaFile.MimeType,
@@ -462,6 +475,7 @@ namespace backend.Controllers
                 var fileDto = new MediaFileDto
                 {
                     Id = mediaFile.Id,
+                    Title = mediaFile.Title,
                     FileName = mediaFile.FileName,
                     FileType = mediaFile.FileType,
                     MimeType = mediaFile.MimeType,

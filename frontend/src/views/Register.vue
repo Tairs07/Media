@@ -1,8 +1,15 @@
 <template>
   <div class="register-container">
-    <!-- 背景动画 -->
+    <!-- 背景 - Squares网格 -->
     <div class="background-layer">
-      <GridMotion class="absolute inset-0" />
+      <Squares
+        direction="diagonal"
+        :speed="0.5"
+        borderColor="rgba(0, 255, 136, 0.25)"
+        :squareSize="50"
+        hoverFillColor="rgba(0, 255, 136, 0.15)"
+        style="width: 100%; height: 100%;"
+      />
     </div>
 
     <!-- 注册卡片 -->
@@ -78,7 +85,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import FadeContent from '../bits-content/Animations/FadeContent/FadeContent.vue'
 import GradientText from '../bits-content/TextAnimations/GradientText/GradientText.vue'
-import GridMotion from '../bits-content/Backgrounds/GridMotion/GridMotion.vue'
+import Squares from '../bits-content/Backgrounds/Squares/Squares.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -111,10 +118,21 @@ const handleRegister = async () => {
 }
 
 .background-layer {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   overflow: hidden;
+}
+
+.background-layer :deep(canvas) {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 .register-card {
@@ -164,18 +182,44 @@ const handleRegister = async () => {
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
 }
 
-:deep(.tech-submit) {
-  background: var(--accent-green);
-  border-color: var(--accent-green);
-  color: var(--bg-primary);
+:deep(.el-button.tech-submit),
+:deep(.el-button--primary.tech-submit) {
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)) !important;
+  background-size: 200% 200%;
+  border: none !important;
+  border-color: var(--accent-green) !important;
+  color: #ffffff !important;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
+  box-shadow: var(--shadow-glow), 0 0 40px rgba(58, 237, 112, 0.15) !important;
+  animation: glow-pulse 3s ease-in-out infinite alternate;
+  position: relative;
+  overflow: hidden;
 }
 
-:deep(.tech-submit:hover) {
-  background: var(--accent-green-dark);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+:deep(.el-button.tech-submit:hover),
+:deep(.el-button--primary.tech-submit:hover) {
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)) !important;
+  box-shadow: 0 0 60px rgba(58, 237, 109, 0.3), 0 0 120px rgba(92, 246, 138, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+:deep(.el-button.tech-submit::before),
+:deep(.el-button--primary.tech-submit::before) {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+:deep(.el-button.tech-submit:hover::before),
+:deep(.el-button--primary.tech-submit:hover::before) {
+  left: 100%;
 }
 
 :deep(.tech-secondary) {

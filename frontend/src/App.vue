@@ -81,105 +81,189 @@ const handleCommand = (command: string) => {
 }
 
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  background: rgba(10, 10, 10, 0.95);
-  backdrop-filter: blur(20px);
+  background: linear-gradient(to bottom, rgba(11, 11, 11, 0.95), transparent);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 2px 20px rgba(0, 255, 136, 0.1);
+  box-shadow: var(--shadow-md);
+  height: 90px;
+  display: flex;
+  align-items: center;
 }
 
 .nav-container {
-  max-width: 1920px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1.2rem 4rem;
+  padding: 0 4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .nav-logo {
   text-decoration: none;
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+}
+
+.nav-logo::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 80px;
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  mask: radial-gradient(ellipse at center, black 0%, black 20%, transparent 80%);
+  -webkit-mask: radial-gradient(ellipse at center, black 0%, black 20%, transparent 80%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .nav-menu {
   display: flex;
-  gap: 2.5rem;
+  gap: 2rem;
   align-items: center;
 }
 
 .nav-link {
   text-decoration: none;
   color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 1rem;
+  font-weight: 400;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   position: relative;
   padding: 0.5rem 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  opacity: 0.7;
 }
 
 .nav-link:hover {
-  color: var(--accent-green);
+  color: var(--text-primary);
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 .nav-link.router-link-active {
-  color: var(--accent-green);
+  color: var(--text-primary);
+  opacity: 1;
 }
 
-.nav-link.router-link-active::after {
+.nav-link.router-link-active::before {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(to right, var(--accent-green), var(--accent-yellow));
-  border-radius: 2px;
-  box-shadow: 0 0 10px var(--accent-green);
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-green-light);
+  border-radius: 50%;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 10px var(--accent-green-light);
 }
 
 .main-content {
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   width: 100%;
+  padding-top: 90px;
 }
 
 .user-menu {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
+  height: 45px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  background: var(--glass-bg);
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
   color: var(--text-primary);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .user-menu:hover {
-  border-color: var(--accent-green);
-  background: rgba(0, 255, 136, 0.1);
+  border-color: var(--border-hover);
+  background: rgba(30, 160, 63, 0.05);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .username {
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 :deep(.el-dropdown-menu) {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
 }
 
 :deep(.el-dropdown-menu__item) {
   color: var(--text-primary);
+  transition: all 0.2s ease;
 }
 
 :deep(.el-dropdown-menu__item:hover) {
-  background: rgba(0, 255, 136, 0.1);
-  color: var(--accent-green);
+  background: rgba(30, 160, 63, 0.1);
+  color: var(--accent-green-light);
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    height: 70px;
+  }
+
+  .nav-container {
+    padding: 0 2rem;
+  }
+
+  .nav-logo {
+    font-size: 1.4rem;
+  }
+
+  .main-content {
+    padding-top: 70px;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    height: 60px;
+  }
+
+  .nav-container {
+    padding: 0 1.5rem;
+  }
+
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+
+  .nav-menu {
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+
+  .main-content {
+    padding-top: 60px;
+  }
 }
 </style>

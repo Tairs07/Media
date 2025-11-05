@@ -56,6 +56,8 @@ namespace backend.Services
                 if (!Directory.Exists(fullPath))
                 {
                     Directory.CreateDirectory(fullPath);
+                    SetLinuxPermissions(fullPath, "755");
+                    _logger.LogInformation("创建并设置目录权限: {Path}", fullPath);
                 }
             }
         }
@@ -69,6 +71,32 @@ namespace backend.Services
                 .Replace("=", "")
                 .Substring(0, 8);
             return $"{userId}_{timestamp}_{randomString}{extension}";
+        }
+
+        private void SetLinuxPermissions(string path, string permissions)
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                try
+                {
+                    var process = new System.Diagnostics.Process
+                    {
+                        StartInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = "chmod",
+                            Arguments = $"{permissions} \"{path}\"",
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        }
+                    };
+                    process.Start();
+                    process.WaitForExit();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "设置权限失败: {Path}", path);
+                }
+            }
         }
 
         public async Task<string> SaveFileAsync(IFormFile file, int userId, string fileType)
@@ -98,12 +126,17 @@ namespace backend.Services
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
+                SetLinuxPermissions(directory, "755");
+                _logger.LogInformation("创建并设置目录权限: {Directory}", directory);
             }
 
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            using (var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 await file.CopyToAsync(stream);
             }
+
+            // 设置文件权限
+            SetLinuxPermissions(fullPath, "644");
 
             return relativePath.Replace('\\', '/');
         }
@@ -132,6 +165,8 @@ namespace backend.Services
                 if (!Directory.Exists(thumbnailDirectory))
                 {
                     Directory.CreateDirectory(thumbnailDirectory);
+                    SetLinuxPermissions(thumbnailDirectory, "755");
+                    _logger.LogInformation("创建并设置缩略图目录权限: {Directory}", thumbnailDirectory);
                 }
 
                 using (var image = await Image.LoadAsync(fullSourcePath))
@@ -148,6 +183,9 @@ namespace backend.Services
                         Quality = 80
                     });
                 }
+
+                // 设置缩略图权限
+                SetLinuxPermissions(fullThumbnailPath, "644");
 
                 return relativeThumbnailPath.Replace('\\', '/');
             }
@@ -181,11 +219,28 @@ namespace backend.Services
         {
             try
             {
+                // 确保路径分隔符为正确的格式
+                filePath = filePath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+
                 var fullPath = Path.Combine(_environment.ContentRootPath, _basePath, filePath);
+
+                _logger.LogInformation("尝试获取文件: {FilePath}, 完整路径: {FullPath}, 文件存在: {Exists}",
+                    filePath, fullPath, File.Exists(fullPath));
+
                 if (File.Exists(fullPath))
                 {
-                    return new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+                    return new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 }
+
+                // 如果文件不存在，记录目录内容以便调试
+                var directory = Path.GetDirectoryName(fullPath);
+                if (directory != null && Directory.Exists(directory))
+                {
+                    var files = Directory.GetFiles(directory);
+                    _logger.LogWarning("文件不存在，目录内容: {Directory}, 文件列表: {Files}",
+                        directory, string.Join(", ", files.Select(Path.GetFileName)));
+                }
+
                 return null;
             }
             catch (Exception ex)
