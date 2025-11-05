@@ -601,4 +601,260 @@ onMounted(() => {
   height: 100%;
   object-fit: contain;
 }
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .media-detail-container {
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+  }
+
+  .back-button {
+    margin-bottom: 1.5rem;
+  }
+
+  :deep(.el-card__body) {
+    padding: 1.5rem;
+  }
+
+  .media-display {
+    margin-bottom: 1rem;
+  }
+
+  .image-container,
+  .video-container {
+    border-radius: 8px;
+  }
+
+  .media-image,
+  .media-video {
+    max-height: 60vh;
+  }
+
+  .media-header {
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .media-title {
+    font-size: 1.5rem;
+  }
+
+  .media-meta {
+    gap: 1.25rem;
+  }
+
+  .meta-item {
+    font-size: 0.9rem;
+  }
+
+  .owner-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .owner-actions .el-button {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  .description-section,
+  .tags-section,
+  .user-section,
+  .file-info-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .description-section h3,
+  .tags-section h3,
+  .file-info-section h3 {
+    font-size: 1.1rem;
+  }
+
+  .description-section p {
+    font-size: 1rem;
+  }
+
+  .user-info {
+    padding: 0.75rem;
+  }
+
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .user-avatar :deep(.el-icon) {
+    font-size: 28px;
+  }
+
+  .file-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .info-item {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .info-item:last-child {
+    border-bottom: none;
+  }
+
+  /* 对话框移动端优化 */
+  :deep(.el-dialog:not(.image-viewer-dialog .el-dialog)) {
+    width: 90% !important;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 390px) {
+  .media-detail-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .back-button {
+    margin-bottom: 1.25rem;
+    width: auto;
+    padding: 0 1rem;
+  }
+
+  :deep(.el-card__body) {
+    padding: 1.25rem;
+  }
+
+  .image-container,
+  .video-container {
+    border-radius: 6px;
+  }
+
+  .media-image,
+  .media-video {
+    max-height: 50vh;
+  }
+
+  .media-header {
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .media-title {
+    font-size: 1.3rem;
+    line-height: 1.3;
+  }
+
+  .media-meta {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .meta-item {
+    font-size: 0.85rem;
+  }
+
+  .owner-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .owner-actions .el-button {
+    width: 100%;
+    height: 44px;
+  }
+
+  .description-section,
+  .tags-section,
+  .user-section,
+  .file-info-section {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .description-section h3,
+  .tags-section h3,
+  .file-info-section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .description-section p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .tags-list {
+    gap: 0.4rem;
+  }
+
+  .tag-item {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.625rem;
+  }
+
+  .user-info {
+    padding: 0.625rem;
+  }
+
+  .user-avatar {
+    width: 45px;
+    height: 45px;
+  }
+
+  .user-avatar :deep(.el-icon) {
+    font-size: 24px;
+  }
+
+  .username {
+    font-size: 0.95rem;
+  }
+
+  .upload-info {
+    font-size: 0.85rem;
+  }
+
+  .file-info-grid {
+    gap: 0.5rem;
+  }
+
+  .info-item {
+    padding: 0.4rem 0;
+  }
+
+  .info-label {
+    font-size: 0.85rem;
+  }
+
+  .info-item span:last-child {
+    font-size: 0.9rem;
+  }
+
+  /* 对话框��动端优化 */
+  :deep(.el-dialog:not(.image-viewer-dialog .el-dialog)) {
+    width: 95% !important;
+  }
+
+  :deep(.el-form-item__label) {
+    font-size: 0.9rem;
+  }
+
+  :deep(.el-input__wrapper),
+  :deep(.el-textarea__inner) {
+    border-radius: 8px;
+  }
+
+  :deep(.el-dialog__footer .el-button) {
+    min-height: 44px;
+  }
+}
 </style>
+

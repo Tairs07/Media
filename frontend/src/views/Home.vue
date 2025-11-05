@@ -271,7 +271,7 @@ onMounted(() => {
 }
 
 .main-title {
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-size: clamp(1.8rem, 5vw, 4.5rem);
   font-weight: 400;
   margin-bottom: 2rem;
   line-height: 1.1;
@@ -285,7 +285,7 @@ onMounted(() => {
 }
 
 .subtitle {
-  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-size: clamp(0.9rem, 2vw, 1.4rem);
   color: var(--text-secondary);
   margin-bottom: 3rem;
   font-weight: 300;
@@ -577,33 +577,114 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .content-wrapper {
-    padding: 2rem 2rem 3rem;
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  .main-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .subtitle {
+    margin-bottom: 2.5rem;
+  }
+
+  .media-section {
+    margin-top: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
   }
 
   .media-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .media-card {
+    border-radius: 12px;
+  }
+
+  .media-info {
+    padding: 1rem;
+  }
+
+  .media-title {
+    font-size: 0.9rem;
+  }
+
+  .media-stats {
+    font-size: 0.8rem;
     gap: 1rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 390px) {
   .content-wrapper {
-    padding: 1.5rem 1.5rem 2rem;
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .main-title {
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+  }
+
+  .subtitle {
+    margin-bottom: 2rem;
   }
 
   .action-buttons {
+    flex-direction: column;
     gap: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
+    width: 100%;
   }
 
   .tech-button {
     height: 48px;
+    width: 100%;
     padding: 0 1.5rem;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    min-height: 44px;
+  }
+
+  .media-section {
+    margin-top: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
   }
 
   .media-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .media-card {
+    border-radius: 10px;
+  }
+
+  .media-thumbnail {
+    aspect-ratio: 16 / 9;
+  }
+
+  .media-info {
+    padding: 0.875rem;
+  }
+
+  .media-title {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .media-stats {
+    font-size: 0.75rem;
+  }
+
+  .load-more .el-button {
+    width: 100%;
+    padding: 0.75rem 2rem;
   }
 }
 </style>

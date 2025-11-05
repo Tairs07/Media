@@ -39,6 +39,9 @@
     <main class="main-content">
       <router-view />
     </main>
+
+    <!-- 底部导航栏（移动端） -->
+    <BottomNavigation />
   </div>
 </template>
 
@@ -48,6 +51,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
 import GradientText from './bits-content/TextAnimations/GradientText/GradientText.vue'
+import BottomNavigation from './components/BottomNavigation.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -178,6 +182,13 @@ const handleCommand = (command: string) => {
   padding-top: 90px;
 }
 
+/* 移动端为底部导航预留空间 */
+@media (max-width: 768px) {
+  .main-content {
+    padding-bottom: 60px;
+  }
+}
+
 .user-menu {
   display: flex;
   align-items: center;
@@ -241,9 +252,20 @@ const handleCommand = (command: string) => {
   }
 }
 
+@media (max-width: 768px) {
+  /* 移动端隐藏顶部导航菜单 */
+  .navbar {
+    display: none;
+  }
+
+  .main-content {
+    padding-top: 0;
+  }
+}
+
 @media (max-width: 640px) {
   .navbar {
-    height: 60px;
+    display: none;
   }
 
   .nav-container {
@@ -263,7 +285,7 @@ const handleCommand = (command: string) => {
   }
 
   .main-content {
-    padding-top: 60px;
+    padding-top: 0;
   }
 }
 </style>

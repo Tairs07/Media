@@ -440,4 +440,183 @@ onMounted(() => {
   display: inline-block !important;
   flex-shrink: 0;
 }
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+  }
+
+  .page-title {
+    margin-bottom: 2.5rem;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  :deep(.el-card__header) {
+    padding: 20px;
+  }
+
+  :deep(.el-card__body) {
+    padding: 20px;
+  }
+
+  .user-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .avatar-placeholder {
+    width: 100px;
+    height: 100px;
+  }
+
+  .info-details {
+    width: 100%;
+  }
+
+  .info-details p {
+    font-size: 1rem;
+    margin: 0.75rem 0;
+  }
+
+  .upload-stats {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .stat-item {
+    flex: 1 1 calc(33.333% - 1rem);
+    min-width: 80px;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+  }
+
+  .action-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tech-button {
+    width: 100%;
+    min-width: unset;
+    min-height: 44px;
+  }
+
+  /* 对话框移动端优化 */
+  :deep(.edit-dialog .el-dialog) {
+    width: 90% !important;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 390px) {
+  .profile-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .page-title {
+    margin-bottom: 2rem;
+  }
+
+  .profile-grid {
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  :deep(.el-card__header) {
+    padding: 16px;
+  }
+
+  :deep(.el-card__body) {
+    padding: 16px;
+  }
+
+  .user-info {
+    gap: 1.25rem;
+  }
+
+  .avatar-placeholder {
+    width: 90px;
+    height: 90px;
+  }
+
+  .avatar-placeholder :deep(.el-icon) {
+    font-size: 48px;
+  }
+
+  .info-details p {
+    font-size: 0.9rem;
+    margin: 0.6rem 0;
+  }
+
+  .edit-section {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+  }
+
+  /* 统计数据改为 2x2 网格 */
+  .upload-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 0.75rem 0;
+  }
+
+  .stat-item {
+    flex: unset;
+    min-width: unset;
+  }
+
+  .stat-value {
+    font-size: 2.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+  }
+
+  .action-section {
+    gap: 1rem;
+  }
+
+  .tech-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
+    height: 46px;
+    min-height: 44px;
+  }
+
+  /* 对话框移动端优化 */
+  :deep(.edit-dialog .el-dialog) {
+    width: 95% !important;
+  }
+
+  :deep(.edit-dialog .el-form-item__label) {
+    font-size: 0.9rem;
+  }
+
+  :deep(.edit-dialog .el-input__wrapper),
+  :deep(.edit-dialog .el-textarea__inner) {
+    border-radius: 8px;
+  }
+}
 </style>
+

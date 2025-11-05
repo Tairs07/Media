@@ -220,4 +220,76 @@ const handleLogin = async () => {
   background: rgba(255, 215, 0, 0.1);
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+  }
+
+  .login-card {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  :deep(.el-card__header) {
+    padding: 24px 20px 20px;
+  }
+
+  :deep(.el-card__body) {
+    padding: 24px 20px;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-button) {
+    height: 44px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .login-card {
+    box-shadow: 0 4px 24px rgba(0, 255, 136, 0.08);
+  }
+
+  :deep(.el-card__header) {
+    padding: 20px 16px 16px;
+  }
+
+  :deep(.el-card__body) {
+    padding: 20px 16px;
+  }
+
+  :deep(.el-form-item__label) {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  :deep(.el-input__wrapper) {
+    padding: 10px 12px;
+  }
+
+  :deep(.el-input__inner) {
+    font-size: 0.95rem;
+  }
+
+  :deep(.el-button) {
+    height: 46px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 18px;
+  }
+}
 </style>
+

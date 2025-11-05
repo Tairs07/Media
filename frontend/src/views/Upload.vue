@@ -639,31 +639,15 @@ const handleUpload = async () => {
 
 @media (max-width: 768px) {
   .upload-container {
-    padding: 2rem 2rem 3rem;
+    padding: 2rem 1.5rem 3rem;
   }
 
-  .upload-area {
-    padding: 2rem;
-    min-height: 350px;
+  .page-title {
+    margin-bottom: 2rem;
   }
 
-  .preview-area {
-    grid-template-columns: 1fr;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .tech-button {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .upload-container {
-    padding: 1.5rem 1.5rem 2rem;
+  .upload-card {
+    border-radius: 16px;
   }
 
   :deep(.el-card__body) {
@@ -675,9 +659,142 @@ const handleUpload = async () => {
     min-height: 300px;
   }
 
-  .tech-button {
-    height: 48px;
+  .upload-text {
+    font-size: 1.1rem;
+  }
+
+  .upload-hint {
     font-size: 0.9rem;
+  }
+
+  .preview-area {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .preview-item {
+    min-height: 200px;
+  }
+
+  .upload-options {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  /* 移动端表单标签顶部对齐 */
+  :deep(.el-form-item) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  :deep(.el-form-item__label) {
+    width: 100% !important;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+
+  :deep(.el-form-item__content) {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .tech-button {
+    width: 100%;
+    height: 48px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 390px) {
+  .upload-container {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .page-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .upload-card {
+    border-radius: 12px;
+  }
+
+  :deep(.el-card__body) {
+    padding: 1.25rem;
+  }
+
+  .upload-area {
+    padding: 1.25rem;
+    min-height: 280px;
+    border-radius: 12px;
+  }
+
+  .upload-text {
+    font-size: 1rem;
+  }
+
+  .upload-hint {
+    font-size: 0.85rem;
+  }
+
+  :deep(.el-icon) {
+    font-size: 48px;
+  }
+
+  .upload-options {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+  }
+
+  :deep(.el-form-item__label) {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  :deep(.el-input__wrapper),
+  :deep(.el-textarea__inner) {
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  :deep(.el-input__inner) {
+    font-size: 0.95rem;
+  }
+
+  :deep(.el-textarea__inner) {
+    font-size: 0.95rem;
+  }
+
+  .preview-item {
+    min-height: 180px;
+    border-radius: 12px;
+  }
+
+  .file-info-overlay {
+    padding: 10px;
+  }
+
+  .file-name-overlay {
+    font-size: 0.85rem;
+  }
+
+  .file-size-overlay {
+    font-size: 0.75rem;
+  }
+
+  .tech-button {
+    height: 46px;
+    font-size: 0.9rem;
+    padding: 0 1.5rem;
+  }
+
+  .action-buttons {
+    margin-top: 1.25rem;
   }
 }
 </style>

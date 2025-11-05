@@ -123,3 +123,234 @@ button {
   background: linear-gradient(135deg, var(--accent-green-light), var(--accent-yellow));
   box-shadow: 0 0 10px var(--glow-green);
 }
+
+/* ============================================
+   移动端响应式设计
+   ============================================ */
+
+/* 标准断点（参考）：
+   - 390px: 现代手机（iPhone 12/13/14 等）
+   - 768px: 平板设备
+   - 1024px: 小屏桌面
+   - 1200px: 标准桌面
+*/
+
+/* 移动端触摸目标最小尺寸 */
+@media (max-width: 768px) {
+  /* 确保所有可点击元素至少 44x44px */
+  button,
+  a.nav-link,
+  .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* 移动端滚动条简化 */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* 移动端字体微调 */
+  body {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* 优化移动端按钮 */
+  button {
+    padding: 0.75em 1.25em;
+  }
+}
+
+/* 超小屏幕优化 (390px) */
+@media (max-width: 390px) {
+  :root {
+    /* 移动端减小间距 */
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+
+    /* 移动端字体大小 */
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+  }
+
+  /* 滚动条进一步简化 */
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  /* 优化字体 */
+  body {
+    font-size: 15px;
+  }
+}
+
+/* 禁用移动端特定的点击高亮 */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 优化移动端输入 */
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+  }
+}
+
+/* ============================================
+   Element Plus 组件移动端优化
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 对话框移动端适配 */
+  .el-dialog {
+    width: 90% !important;
+    max-width: 500px;
+    margin: 0 auto !important;
+  }
+
+  .el-dialog__header {
+    padding: 20px 16px;
+  }
+
+  .el-dialog__body {
+    padding: 16px;
+  }
+
+  .el-dialog__footer {
+    padding: 16px;
+  }
+
+  /* 消息提示移动端位置调整 */
+  .el-message {
+    min-width: 280px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .el-notification {
+    width: calc(100vw - 32px);
+    max-width: 400px;
+  }
+
+  /* 表单移动端优化 */
+  .el-form-item {
+    margin-bottom: 18px;
+  }
+
+  .el-form-item__label {
+    font-size: 0.9rem;
+  }
+
+  /* 按钮移动端优化 */
+  .el-button {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+
+  .el-button--large {
+    min-height: 48px;
+    padding: 12px 20px;
+  }
+
+  .el-button--small {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+
+  /* 输入框移动端优化 */
+  .el-input__wrapper {
+    padding: 8px 12px;
+  }
+
+  .el-input__inner {
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+  }
+
+  .el-textarea__inner {
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+  }
+
+  /* 下拉菜单移动端优化 */
+  .el-dropdown-menu {
+    max-width: calc(100vw - 32px);
+  }
+
+  /* 卡片移动端优化 */
+  .el-card {
+    border-radius: 12px;
+  }
+
+  .el-card__header {
+    padding: 16px;
+  }
+
+  .el-card__body {
+    padding: 16px;
+  }
+
+  /* 标签移动端优化 */
+  .el-tag {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+  }
+
+  /* 图标移动端大小 */
+  .el-icon {
+    font-size: 1.2em;
+  }
+}
+
+@media (max-width: 390px) {
+  /* 超小屏幕对话框 */
+  .el-dialog {
+    width: 95% !important;
+  }
+
+  .el-dialog__header {
+    padding: 16px 12px;
+  }
+
+  .el-dialog__body {
+    padding: 12px;
+  }
+
+  .el-dialog__footer {
+    padding: 12px;
+  }
+
+  /* 消息提示进一步优化 */
+  .el-message {
+    min-width: 260px;
+    font-size: 0.9rem;
+  }
+
+  /* 表单进一步优化 */
+  .el-form-item {
+    margin-bottom: 16px;
+  }
+
+  .el-form-item__label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  /* 按钮进一步优化 */
+  .el-button {
+    font-size: 0.9rem;
+  }
+
+  /* 卡片进一步优化 */
+  .el-card {
+    border-radius: 10px;
+  }
+
+  .el-card__header,
+  .el-card__body {
+    padding: 14px;
+  }
+}
