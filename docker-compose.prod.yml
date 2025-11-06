@@ -1,7 +1,29 @@
-version: '3.8'
-
 services:
-  # 后端服务（使用预构建的发布文件）
+  # PostgreSQL 18 数据库
+  postgres:
+    image: postgres:18-bookworm
+    container_name: mediashare-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mediashare
+      - POSTGRES_USER=mediashare_user
+      - POSTGRES_PASSWORD=mediashare_password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      # PostgreSQL 18+ 推荐的挂载方式
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mediashare-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mediashare_user -d mediashare"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # 后端服务
   backend:
     build:
       context: ./backend
@@ -11,14 +33,15 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      # 持久化数据库文件
-      - ./data/MediaShareDB.db:/app/MediaShareDB.db
       # 持久化上传文件
       - ./data/uploads:/app/wwwroot/uploads
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
-      - ConnectionStrings__DefaultConnection=Data Source=MediaShareDB.db
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=mediashare;Username=mediashare_user;Password=mediashare_password
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - mediashare-network
     healthcheck:
@@ -38,11 +61,14 @@ services:
     ports:
       - "80:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - mediashare-network
 
 networks:
   mediashare-network:
     driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

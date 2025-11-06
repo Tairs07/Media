@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 添加数据库上下文
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 添加JWT认证
 var jwtSettings = builder.Configuration.GetSection("Jwt");
