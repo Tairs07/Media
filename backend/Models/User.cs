@@ -37,5 +37,7 @@ namespace backend.Models
         public virtual ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         
         public virtual ICollection<UserSession> Sessions { get; set; } = new List<UserSession>();
+
+        public virtual ICollection<ChatSession> ChatSessions { get; set; } = new List<ChatSession>();
     }
 }

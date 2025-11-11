@@ -13,6 +13,8 @@ namespace backend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<MediaFile> MediaFiles { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
+        public DbSet<ChatSession> ChatSessions { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -108,6 +110,72 @@ namespace backend.Data
                 
                 entity.Property(e => e.IsActive)
                       .HasDefaultValue(true);
+            });
+
+            // 配置ChatSession实体
+            modelBuilder.Entity<ChatSession>(entity =>
+            {
+                entity.ToTable("ChatSessions");
+                
+                // 外键关系
+                entity.HasOne(c => c.User)
+                      .WithMany(u => u.ChatSessions)
+                      .HasForeignKey(c => c.UserId)
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .HasConstraintName("FK_ChatSessions_Users");
+                
+                // 索引
+                entity.HasIndex(e => e.UserId)
+                      .HasDatabaseName("IX_ChatSessions_UserId");
+                
+                entity.HasIndex(e => e.UpdatedAt)
+                      .HasDatabaseName("IX_ChatSessions_UpdatedAt");
+                
+                entity.HasIndex(e => new { e.UserId, e.IsDeleted })
+                      .HasDatabaseName("IX_ChatSessions_UserId_IsDeleted");
+                
+                // 默认值
+                entity.Property(e => e.CreatedAt)
+                      .HasDefaultValueSql("datetime('now', 'utc')");
+                
+                entity.Property(e => e.UpdatedAt)
+                      .HasDefaultValueSql("datetime('now', 'utc')");
+                
+                entity.Property(e => e.IsDeleted)
+                      .HasDefaultValue(false);
+                
+                entity.Property(e => e.Title)
+                      .HasDefaultValue("新对话");
+                
+                entity.Property(e => e.Model)
+                      .HasDefaultValue("qwen-plus");
+            });
+
+            // 配置ChatMessage实体
+            modelBuilder.Entity<ChatMessage>(entity =>
+            {
+                entity.ToTable("ChatMessages");
+                
+                // 外键关系
+                entity.HasOne(m => m.Session)
+                      .WithMany(s => s.Messages)
+                      .HasForeignKey(m => m.SessionId)
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .HasConstraintName("FK_ChatMessages_ChatSessions");
+                
+                // 索引
+                entity.HasIndex(e => e.SessionId)
+                      .HasDatabaseName("IX_ChatMessages_SessionId");
+                
+                entity.HasIndex(e => e.CreatedAt)
+                      .HasDatabaseName("IX_ChatMessages_CreatedAt");
+                
+                entity.HasIndex(e => new { e.SessionId, e.CreatedAt })
+                      .HasDatabaseName("IX_ChatMessages_SessionId_CreatedAt");
+                
+                // 默认值
+                entity.Property(e => e.CreatedAt)
+                      .HasDefaultValueSql("datetime('now', 'utc')");
             });
         }
     }

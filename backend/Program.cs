@@ -49,6 +49,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+// 注册HttpClient和QwenService
+builder.Services.AddHttpClient<IQwenService, QwenService>();
+
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -89,21 +92,21 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// 自动运行数据库迁移
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
-        Console.WriteLine("数据库迁移成功");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"数据库迁移失败: {ex.Message}");
-    }
-}
+// 数据库迁移已禁用，请手动执行 database_schema.sql 脚本
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//     try
+//     {
+//         var context = services.GetRequiredService<ApplicationDbContext>();
+//         context.Database.Migrate();
+//         Console.WriteLine("数据库迁移成功");
+//     }
+//     catch (Exception ex)
+//     {
+//         Console.WriteLine($"数据库迁移失败: {ex.Message}");
+//     }
+// }
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
