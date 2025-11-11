@@ -1,13 +1,12 @@
 <template>
   <div class="home-container">
-    <!-- 背景动画层 - Squares网格 -->
+    <!-- 背景动画层 - Orb -->
     <div class="background-layer">
-      <Squares
-        direction="diagonal"
-        :speed="0.5"
-        borderColor="rgba(0, 255, 136, 0.75)"
-        :squareSize="50"
-        hoverFillColor="rgba(0, 255, 136, 0.75)"
+      <Orb
+        :hue="100"
+        :hoverIntensity="0.5"
+        :rotateOnHover="true"
+        :forceHoverState="false"
         style="width: 100%; height: 100%;"
       />
     </div>
@@ -35,6 +34,15 @@
           >
             <span class="button-glow"></span>
             开始上传
+          </el-button>
+          <el-button 
+            v-if="authStore.token"
+            size="large" 
+            class="tech-button secondary"
+            @click="$router.push('/chat')"
+          >
+            <el-icon style="margin-right: 8px;"><ChatLineRound /></el-icon>
+            AI对话
           </el-button>
           <el-button 
             v-if="!authStore.token"
@@ -127,10 +135,10 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { Loading, Picture, View, Star } from '@element-plus/icons-vue'
+import { Loading, Picture, View, Star, ChatLineRound } from '@element-plus/icons-vue'
 import FadeContent from '../bits-content/Animations/FadeContent/FadeContent.vue'
 import GradientText from '../bits-content/TextAnimations/GradientText/GradientText.vue'
-import Squares from '../bits-content/Backgrounds/Squares/Squares.vue'
+import Orb from '../bits-content/Backgrounds/Orb/Orb.vue'
 import api from '../utils/api'
 
 const router = useRouter()
@@ -249,10 +257,20 @@ onMounted(() => {
   background: var(--bg-primary);
 }
 
+.background-layer :deep(div) {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .background-layer :deep(canvas) {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
 }
 
 .content-wrapper {

@@ -10,6 +10,7 @@
         <div class="nav-menu">
           <router-link to="/" class="nav-link">首页</router-link>
           <router-link v-if="authStore.token" to="/upload" class="nav-link">上传</router-link>
+          <router-link v-if="authStore.token" to="/chat" class="nav-link">AI对话</router-link>
           <router-link v-if="authStore.token" to="/profile" class="nav-link">个人中心</router-link>
           <template v-if="!authStore.token">
             <router-link to="/login" class="nav-link">登录</router-link>
@@ -26,6 +27,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item command="profile">个人中心</el-dropdown-item>
                   <el-dropdown-item command="upload">上传文件</el-dropdown-item>
+                  <el-dropdown-item command="chat">AI对话</el-dropdown-item>
                   <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -70,6 +72,9 @@ const handleCommand = (command: string) => {
     case 'upload':
       router.push('/upload')
       break
+    case 'chat':
+      router.push('/chat')
+      break
     case 'logout':
       authStore.logout()
       router.push('/login')
@@ -79,9 +84,18 @@ const handleCommand = (command: string) => {
 </script>
 
 <style>
+html, body {
+  overflow-x: hidden;
+}
+
 #app {
   min-height: 100vh;
   background: var(--bg-primary);
+}
+
+/* 聊天页面时防止body滚动 */
+body:has(.ai-chat-container) {
+  overflow: hidden;
 }
 
 .navbar {
@@ -101,9 +115,8 @@ const handleCommand = (command: string) => {
 }
 
 .nav-container {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 4rem;
+  padding: 0 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -177,8 +190,13 @@ const handleCommand = (command: string) => {
 }
 
 .main-content {
-  min-height: 100vh;
   width: 100%;
+  padding-top: 90px;
+}
+
+/* AI对话页面特殊处理 - 不需要最小高度 */
+.main-content:has(.ai-chat-container) {
+  min-height: 0;
   padding-top: 90px;
 }
 
@@ -217,21 +235,41 @@ const handleCommand = (command: string) => {
   font-size: 0.9rem;
 }
 
-:deep(.el-dropdown-menu) {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  backdrop-filter: blur(20px);
-  box-shadow: var(--shadow-lg);
+/* 全局下拉菜单样式 - 适用于所有页面 */
+.el-dropdown-menu {
+  background: rgba(26, 26, 26, 0.98) !important;
+  border: 1px solid rgba(0, 255, 136, 0.3) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 255, 136, 0.25) !important;
+  padding: 8px !important;
 }
 
-:deep(.el-dropdown-menu__item) {
-  color: var(--text-primary);
-  transition: all 0.2s ease;
+.el-dropdown-menu__item {
+  background: transparent !important;
+  color: #e0e0e0 !important;
+  font-weight: 500 !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 4px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-:deep(.el-dropdown-menu__item:hover) {
-  background: rgba(30, 160, 63, 0.1);
-  color: var(--accent-green-light);
+.el-dropdown-menu__item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.el-dropdown-menu__item:hover {
+  background: rgba(0, 255, 136, 0.15) !important;
+  color: var(--accent-green-light) !important;
+  transform: translateX(4px);
+}
+
+.el-dropdown-menu__item.is-divided {
+  border-top: 1px solid rgba(0, 255, 136, 0.2) !important;
+  margin-top: 4px !important;
+  padding-top: 10px !important;
 }
 
 @media (max-width: 900px) {
@@ -240,7 +278,7 @@ const handleCommand = (command: string) => {
   }
 
   .nav-container {
-    padding: 0 2rem;
+    padding: 0 1.5rem;
   }
 
   .nav-logo {
@@ -260,6 +298,12 @@ const handleCommand = (command: string) => {
 
   .main-content {
     padding-top: 0;
+    padding-bottom: 60px; /* 为底部导航栏留出空间 */
+  }
+
+  /* AI对话页面特殊处理 */
+  .main-content:has(.ai-chat-container) {
+    padding-bottom: 0;
   }
 }
 
@@ -269,7 +313,7 @@ const handleCommand = (command: string) => {
   }
 
   .nav-container {
-    padding: 0 1.5rem;
+    padding: 0 1rem;
   }
 
   .nav-logo {

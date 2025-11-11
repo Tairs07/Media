@@ -1,13 +1,12 @@
 <template>
   <div class="register-container">
-    <!-- 背景 - Squares网格 -->
+    <!-- 背景 - Orb -->
     <div class="background-layer">
-      <Squares
-        direction="diagonal"
-        :speed="0.5"
-        borderColor="rgba(0, 255, 136, 0.25)"
-        :squareSize="50"
-        hoverFillColor="rgba(0, 255, 136, 0.15)"
+      <Orb
+        :hue="100"
+        :hoverIntensity="0.5"
+        :rotateOnHover="true"
+        :forceHoverState="false"
         style="width: 100%; height: 100%;"
       />
     </div>
@@ -85,7 +84,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import FadeContent from '../bits-content/Animations/FadeContent/FadeContent.vue'
 import GradientText from '../bits-content/TextAnimations/GradientText/GradientText.vue'
-import Squares from '../bits-content/Backgrounds/Squares/Squares.vue'
+import Orb from '../bits-content/Backgrounds/Orb/Orb.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -129,10 +128,20 @@ const handleRegister = async () => {
   overflow: hidden;
 }
 
+.background-layer :deep(div) {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .background-layer :deep(canvas) {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
 }
 
 .register-card {

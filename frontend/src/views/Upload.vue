@@ -1,13 +1,12 @@
 <template>
   <div class="upload-container">
-    <!-- 背景 - Squares网格 -->
+    <!-- 背景 - Orb -->
     <div class="background-layer">
-      <Squares
-        direction="diagonal"
-        :speed="0.5"
-        borderColor="rgba(0, 255, 136, 0.25)"
-        :squareSize="50"
-        hoverFillColor="rgba(0, 255, 136, 0.15)"
+      <Orb
+        :hue="100"
+        :hoverIntensity="0.5"
+        :rotateOnHover="true"
+        :forceHoverState="false"
         style="width: 100%; height: 100%;"
       />
     </div>
@@ -153,7 +152,7 @@ import { ElMessage } from 'element-plus'
 import { UploadFilled, Delete, Document } from '@element-plus/icons-vue'
 import FadeContent from '../bits-content/Animations/FadeContent/FadeContent.vue'
 import GradientText from '../bits-content/TextAnimations/GradientText/GradientText.vue'
-import Squares from '../bits-content/Backgrounds/Squares/Squares.vue'
+import Orb from '../bits-content/Backgrounds/Orb/Orb.vue'
 import api from '../utils/api'
 
 const router = useRouter()
@@ -292,9 +291,10 @@ const handleUpload = async () => {
 <style scoped>
 .upload-container {
   position: relative;
-  min-height: 100vh;
-  padding: 2rem 4rem 4rem;
+  height: calc(100vh - 90px);
+  padding: 1.5rem 1.5rem 2rem;
   width: 100%;
+  overflow: hidden;
 }
 
 .background-layer {
@@ -306,12 +306,23 @@ const handleUpload = async () => {
   width: 100vw;
   height: 100vh;
   z-index: 0;
+  overflow: hidden;
+}
+
+.background-layer :deep(div) {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .background-layer :deep(canvas) {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
 }
 
 .content-wrapper {
@@ -324,8 +335,8 @@ const handleUpload = async () => {
 
 .page-title {
   text-align: center;
-  margin-bottom: 3rem;
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  margin-bottom: 1.5rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 400;
   letter-spacing: -1px;
   text-shadow:
@@ -340,22 +351,22 @@ const handleUpload = async () => {
   -webkit-backdrop-filter: blur(25px);
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 24px;
+  border-radius: 16px;
   box-shadow: var(--shadow-md);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   overflow: hidden;
   animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 :deep(.el-card__body) {
-  padding: 2.5rem;
+  padding: 1.5rem;
 }
 
 .upload-area {
-  min-height: 420px;
+  min-height: 300px;
   border: 2px dashed var(--border-color);
-  border-radius: 16px;
-  padding: 3rem;
+  border-radius: 12px;
+  padding: 2rem;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background: rgba(30, 160, 63, 0.03);
@@ -393,13 +404,13 @@ const handleUpload = async () => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  gap: 1.5rem;
+  gap: 1rem;
   position: relative;
   z-index: 1;
 }
 
 .upload-text {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-primary);
   text-align: center;
@@ -407,13 +418,13 @@ const handleUpload = async () => {
 
 .upload-hint {
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: 0.9rem;
   opacity: 0.8;
 }
 
 .upload-options {
-  margin-top: 2.5rem;
-  padding-top: 2.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--border-color);
 }
 
@@ -470,8 +481,8 @@ const handleUpload = async () => {
 
 .preview-area {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
   width: 100%;
   align-content: start;
 }
@@ -484,19 +495,19 @@ const handleUpload = async () => {
 
 .preview-area:has(.preview-item:only-child) .preview-item {
   height: 100%;
-  min-height: 400px;
+  min-height: 280px;
   aspect-ratio: unset;
 }
 
 .preview-item {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  min-height: 250px;
+  min-height: 180px;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
 }
@@ -560,18 +571,18 @@ const handleUpload = async () => {
 
 .action-buttons {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   justify-content: center;
   position: relative;
   z-index: 10;
-  margin-top: 2rem;
+  margin-top: 1rem;
   animation: fadeInUp 1s ease-out 0.4s both;
 }
 
 .tech-button {
-  padding: 0 2.5rem;
-  height: 55px;
-  font-size: 1rem;
+  padding: 0 2rem;
+  height: 45px;
+  font-size: 0.9rem;
   font-weight: 500;
   border: none;
   border-radius: 50px;

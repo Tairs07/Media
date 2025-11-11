@@ -234,9 +234,10 @@ onMounted(() => {
 <style scoped>
 .profile-container {
   position: relative;
-  min-height: calc(100vh - 80px);
-  padding: 60px 4rem;
+  height: calc(100vh - 90px);
+  padding: 2rem 1.5rem;
   width: 100%;
+  overflow: hidden;
 }
 
 .background-layer {
@@ -255,15 +256,15 @@ onMounted(() => {
 
 .page-title {
   text-align: center;
-  margin-bottom: 4rem;
-  font-size: clamp(2.5rem, 4vw, 4rem);
+  margin-bottom: 2rem;
+  font-size: clamp(2rem, 4vw, 3rem);
 }
 
 .profile-grid {
   display: grid;
-  gap: 2.5rem;
+  gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .profile-card {
@@ -280,13 +281,13 @@ onMounted(() => {
 }
 
 :deep(.el-card__header) {
-  padding: 24px;
+  padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   background: transparent;
 }
 
 :deep(.el-card__body) {
-  padding: 24px;
+  padding: 1rem;
   background: transparent;
 }
 
@@ -300,14 +301,14 @@ onMounted(() => {
 
 .user-info {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .avatar-placeholder {
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-yellow) 100%);
   display: flex;
@@ -318,14 +319,18 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+.avatar-placeholder :deep(.el-icon) {
+  font-size: 48px;
+}
+
 .info-details {
   flex: 1;
 }
 
 .info-details p {
-  margin: 1rem 0;
+  margin: 0.5rem 0;
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .info-details strong {
@@ -334,16 +339,16 @@ onMounted(() => {
 }
 
 .edit-section {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border-color);
 }
 
 .upload-stats {
   display: flex;
   justify-content: space-around;
-  gap: 2rem;
-  padding: 1rem 0;
+  gap: 1rem;
+  padding: 0.5rem 0;
 }
 
 .stat-item {
@@ -352,39 +357,39 @@ onMounted(() => {
 }
 
 .stat-value {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 900;
   background: linear-gradient(135deg, var(--accent-green), var(--accent-yellow));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   line-height: 1;
 }
 
 .stat-label {
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .action-section {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .tech-button {
-  padding: 1rem 2rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 2px solid;
   transition: all 0.3s ease;
-  min-width: 150px;
+  min-width: 130px;
 }
 
 .tech-button.primary {

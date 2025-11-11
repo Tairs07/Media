@@ -34,6 +34,12 @@ const router = createRouter({
       path: '/media/:id',
       name: 'MediaDetail',
       component: () => import('../views/MediaDetail.vue')
+    },
+    {
+      path: '/chat',
+      name: 'AIChat',
+      component: () => import('../views/AIChat.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })

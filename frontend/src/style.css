@@ -305,6 +305,149 @@ button {
   }
 }
 
+/* ============================================
+   Element Plus 下拉框深色主题
+   ============================================ */
+
+/* 下拉菜单容器 - 使用多重选择器确保优先级 */
+.el-select-dropdown,
+.el-select-dropdown.el-popper,
+.el-popper.is-light,
+.el-popper.is-pure,
+.el-popper[data-popper-placement],
+div.el-select-dropdown.el-popper[data-popper-placement] {
+  background: rgba(26, 26, 26, 0.98) !important;
+  border: 1px solid rgba(0, 255, 136, 0.3) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 255, 136, 0.2) !important;
+  padding: 8px !important;
+}
+
+/* 强制设置所有 Popper 实例的背景 */
+.el-popper.el-select__popper {
+  background: rgba(26, 26, 26, 0.98) !important;
+}
+
+.el-select-dropdown__list {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* 下拉选项 */
+.el-select-dropdown__item {
+  color: #e0e0e0 !important;
+  font-weight: 500 !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 4px !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background: rgba(0, 255, 136, 0.15) !important;
+  color: var(--accent-green-light) !important;
+  transform: translateX(4px);
+}
+
+/* 选中的选项 */
+.el-select-dropdown__item.selected,
+.el-select-dropdown__item.is-selected {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 191, 255, 0.2)) !important;
+  color: var(--accent-green-light) !important;
+  font-weight: 600 !important;
+  border-left: 3px solid var(--accent-green-light) !important;
+  position: relative !important;
+}
+
+.el-select-dropdown__item.selected:hover,
+.el-select-dropdown__item.is-selected:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 191, 255, 0.25)) !important;
+}
+
+.el-select-dropdown__item.selected::after,
+.el-select-dropdown__item.is-selected::after {
+  content: '✓';
+  position: absolute;
+  right: 16px;
+  color: var(--accent-green-light);
+  font-weight: bold;
+}
+
+/* 禁用项 */
+.el-select-dropdown__item.is-disabled {
+  color: rgba(255, 255, 255, 0.3) !important;
+  cursor: not-allowed !important;
+  background: transparent !important;
+}
+
+.el-select-dropdown__item.is-disabled:hover {
+  background: transparent !important;
+  transform: none !important;
+}
+
+/* 空状态 */
+.el-select-dropdown__empty {
+  color: rgba(255, 255, 255, 0.5) !important;
+  padding: 16px !important;
+  text-align: center;
+}
+
+/* 滚动条 */
+.el-select-dropdown .el-scrollbar__wrap {
+  max-height: 300px;
+}
+
+.el-select-dropdown .el-scrollbar__bar {
+  opacity: 0.6;
+}
+
+.el-select-dropdown .el-scrollbar__thumb {
+  background: rgba(0, 255, 136, 0.3) !important;
+  border-radius: 4px !important;
+}
+
+.el-select-dropdown .el-scrollbar__thumb:hover {
+  background: rgba(0, 255, 136, 0.5) !important;
+}
+
+/* Popper 容器 - 添加所有可能的选择器 */
+.el-popper,
+.el-popper.is-light,
+.el-popper.is-pure,
+div[class*="el-popper"],
+div[class*="el-select"] {
+  background: rgba(26, 26, 26, 0.98) !important;
+  border-color: rgba(0, 255, 136, 0.3) !important;
+}
+
+/* Popper 箭头 */
+.el-popper__arrow::before,
+.el-popper.is-light .el-popper__arrow::before,
+.el-popper .el-popper__arrow::before {
+  background: rgba(26, 26, 26, 0.98) !important;
+  border: 1px solid rgba(0, 255, 136, 0.3) !important;
+}
+
+/* 额外的通用样式覆盖 - 针对所有下拉菜单 */
+[role="listbox"],
+[role="option"] {
+  background: transparent !important;
+}
+
+/* 确保下拉菜单内的滚动区域也是透明的 */
+.el-select-dropdown .el-select-dropdown__wrap,
+.el-select-dropdown .el-scrollbar__view {
+  background: transparent !important;
+}
+
 @media (max-width: 390px) {
   /* 超小屏幕对话框 */
   .el-dialog {
