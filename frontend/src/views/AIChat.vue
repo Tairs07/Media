@@ -201,7 +201,7 @@ import Orb from '../bits-content/Backgrounds/Orb/Orb.vue'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.css'
-import AIAvatar from '../../images/AI.gif'
+import AIAvatar from '../../public/images/AI.gif'
 
 const chatStore = useChatStore()
 const inputMessage = ref('')

@@ -48,12 +48,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
-import GradientText from './bits-content/TextAnimations/GradientText/GradientText.vue'
-import BottomNavigation from './components/BottomNavigation.vue'
+
+// 异步加载组件以优化首屏加载
+const GradientText = defineAsyncComponent(() => import('./bits-content/TextAnimations/GradientText/GradientText.vue'))
+const BottomNavigation = defineAsyncComponent(() => import('./components/BottomNavigation.vue'))
 
 const router = useRouter()
 const authStore = useAuthStore()

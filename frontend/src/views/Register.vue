@@ -96,10 +96,30 @@ const form = ref({
 })
 
 const handleRegister = async () => {
+  // 前端验证
+  if (!form.value.username.trim()) {
+    ElMessage.warning('请输入用户名')
+    return
+  }
+  if (!form.value.email.trim()) {
+    ElMessage.warning('请输入邮箱')
+    return
+  }
+  if (!form.value.password) {
+    ElMessage.warning('请输入密码')
+    return
+  }
+  if (form.value.password.length < 6) {
+    ElMessage.warning('密码长度至少为6位')
+    return
+  }
+
   try {
     await authStore.register(form.value.username, form.value.email, form.value.password)
+    ElMessage.success('注册成功！')
     router.push('/')
   } catch (error) {
+    // 错误已在 API 拦截器中显示
     console.error('注册失败:', error)
   }
 }

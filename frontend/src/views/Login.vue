@@ -83,10 +83,22 @@ const form = ref({
 })
 
 const handleLogin = async () => {
+  // 前端验证
+  if (!form.value.username.trim()) {
+    ElMessage.warning('请输入用户名')
+    return
+  }
+  if (!form.value.password) {
+    ElMessage.warning('请输入密码')
+    return
+  }
+
   try {
     await authStore.login(form.value.username, form.value.password)
+    ElMessage.success('登录成功！')
     router.push('/')
   } catch (error) {
+    // 错误已在 API 拦截器中显示
     console.error('登录失败:', error)
   }
 }
